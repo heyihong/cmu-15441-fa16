@@ -8,13 +8,13 @@
 #                                                                              #
 ################################################################################
 
-default: echo_server echo_client
+default: lisod echo_client
 
-echo_server:
-	@gcc echo_server.c -o echo_server -Wall -Werror
+lisod:
+	@gcc lisod.c -o lisod -Wall -Werror
 
 echo_client:
 	@gcc echo_client.c -o echo_client -Wall -Werror
 
 clean:
-	@rm echo_server echo_client
+	@rm lisod echo_client
