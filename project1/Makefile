@@ -10,11 +10,17 @@
 
 default: lisod echo_client
 
-lisod:
-	@gcc lisod.c -o lisod -Wall -Werror
+CC = gcc
+CFLAGS=-Wall -Werror
 
-echo_client:
-	@gcc echo_client.c -o echo_client -Wall -Werror
+%.o : %.c
+	$(CC) -c $(CCFLAGS) $<
+
+lisod: pool.o lisod.o
+	$(CC) -o lisod pool.o lisod.o ${CFLAGS}
+
+echo_client: echo_client.o
+	$(CC) -o echo_client echo_client.o ${CFLAGS}
 
 clean:
-	@rm lisod echo_client
+	@rm *.o lisod echo_client
