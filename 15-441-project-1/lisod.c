@@ -88,7 +88,6 @@ void send_error(struct conn_t* conn, StatusCode status_code) {
     response_add_header(&response, "Content-Type", "text/html");     
     send_response(conn, &response);
     response_destroy(&response);
-    pool_remove_conn(&pool, conn); 
 }
 
 int check_http_version(struct conn_t* conn, Request* request) {
@@ -224,10 +223,8 @@ int main(int argc, char* argv[])
             request = parse(&(conn->parser), buf, &buf_offset, recvret);
             if (request != NULL) {
                 log(LOG_INFO, "handle request: %s %s %s\n", request->http_method, request->http_uri, request->http_version);
-                Request_header* header = request_get_header(request, "Connection");
-                if (header != NULL && !strcmp(header->header_value, "close")) {
-                    conn->close = 1;
-                }
+                // always close connection 
+                conn->close = 1;
                 if (!strcmp(request->http_method, "GET")) {
                     do_get(conn, request); 
                 } else if (!strcmp(request->http_method, "POST")) {
