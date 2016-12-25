@@ -8,19 +8,34 @@
 #                                                                              #
 ################################################################################
 
-default: lisod echo_client
-
 CC = gcc
-CFLAGS=-Wall -Werror
+CFLAGS=-g -Wall
+DEPS = parse.h y.tab.h
 
-%.o : %.c
-	$(CC) -c $(CCFLAGS) $<
+default: all
 
-lisod: pool.o lisod.o
-	$(CC) -o lisod pool.o lisod.o ${CFLAGS}
+all: example lisod echo_client
+
+%.o : %.c $(DEPS)
+	$(CC) -c $(CFLAGS) $<
+
+lex.yy.c: lexer.l
+	flex $^
+
+y.tab.c: parser.y
+	yacc -d $^
+
+example: y.tab.o lex.yy.o utils.o http.o parse.o example.o
+	$(CC) ${CFLAGS} -o $@ $^ -I.
+
+lisod: log.o y.tab.o lex.yy.o utils.o http.o parse.o pool.o lisod.o
+	$(CC) ${CFLAGS} -o $@ $^ -I.
 
 echo_client: echo_client.o
-	$(CC) -o echo_client echo_client.o ${CFLAGS}
+	$(CC) ${CFLAGS} -o $@ $^ -I.
 
 clean:
-	@rm *.o lisod echo_client
+	@rm -f *.o lisod echo_client example lex.yy.c y.tab.c y.tab.h
+
+handin: clean
+	cd .. && tar cvf handin.tar 15-441-project-1 && cd -
