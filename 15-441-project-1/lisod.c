@@ -27,7 +27,8 @@ const char* mimetype_lookup[5][2] = {{"html", "text/html"},
                                      {"gif", "image/gif"}};
 
 const char* get_mimetype(const char* ext) {
-    for (int i = 0; i != 5; ++i) {
+    int i;
+    for (i = 0; i != 5; ++i) {
         if (!strcasecmp(ext, mimetype_lookup[i][0])) {
             return mimetype_lookup[i][1];
         }
