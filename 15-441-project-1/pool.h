@@ -12,6 +12,8 @@
 
 struct conn_t {
 	int sockfd;
+	int failed;
+	int close;
 	Parser parser;
 	struct conn_t* prev;
 	struct conn_t* next;

@@ -4,6 +4,7 @@
 
 void conn_init(struct conn_t* conn, int sockfd) {
   conn->sockfd = sockfd;
+  conn->failed = conn->close = 0;
   parser_init(&(conn->parser));
   conn->prev = conn->next = NULL;
 }
