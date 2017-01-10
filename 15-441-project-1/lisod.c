@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include "pool.h"
 #include "utils.h"
 #include "log.h"
@@ -14,58 +15,91 @@
 
 struct {
     int http_port;
+    int https_port;
+    const char* lock_file;
     const char* log_filename;
     const char* www_folder; 
+    const char* key_file;
+    const char* crt_file;
 } options;
 
 struct pool_t pool;
 
-const char* mimetype_lookup[5][2] = {{"html", "text/html"},
-                                     {"css", "text/css"}, 
-                                     {"png", "image/png"}, 
-                                     {"jpg", "image/jpeg"}, 
-                                     {"gif", "image/gif"}};
-
-const char* get_mimetype(const char* ext) {
-    int i;
-    for (i = 0; i != 5; ++i) {
-        if (!strcasecmp(ext, mimetype_lookup[i][0])) {
-            return mimetype_lookup[i][1];
-        }
-    }
-    return "application/octet-stream";
+void lisod_shutdown(int exit_stat) {
+    pool_destroy(&pool); 
+    log_cleanup();
+    exit(exit_stat);
 }
 
-void rbsend(struct conn_t* conn, char* b, int len) {
-    if (conn->failed) {
-        return;
-    }
-    int sockfd = conn->sockfd;
-    int sendret = 0;
-    while (len > 0) {
-        sendret = send(sockfd, b, len, 0);
-        if (sendret <= 0) {
-            conn->failed = 1;
-            return;
-        }
-        len -= sendret;
-    } 
+void signal_handler(int sig)
+{
+    switch(sig)
+    {
+        case SIGHUP:
+            /* rehash the server */
+            break;          
+        case SIGTERM:
+            /* finalize and shutdown the server */
+            lisod_shutdown(EXIT_SUCCESS);
+            break;    
+        default:
+            break;
+            /* unhandled signal */      
+    }       
+}
+
+int daemonize(const char* lock_file)
+{
+    /* drop to having init() as parent */
+    int i, lfp, pid = fork();
+    char str[256] = {0};
+    if (pid < 0) exit(EXIT_FAILURE);
+    if (pid > 0) exit(EXIT_SUCCESS);
+
+    setsid();
+
+    for (i = getdtablesize(); i>=0; i--)
+            close(i);
+
+    i = open("/dev/null", O_RDWR);
+    dup(i); /* stdout */
+    dup(i); /* stderr */
+    umask(027);
+
+    lfp = open(lock_file, O_RDWR|O_CREAT, 0640);
+    
+    if (lfp < 0)
+            exit(EXIT_FAILURE); /* can not open */
+
+    if (lockf(lfp, F_TLOCK, 0) < 0)
+            exit(EXIT_SUCCESS); /* can not lock */
+    
+    /* only first instance continues */
+    sprintf(str, "%d\n", getpid());
+    write(lfp, str, strlen(str)); /* record pid to lockfile */
+
+    signal(SIGCHLD, SIG_IGN); /* child terminate signal */
+
+    signal(SIGHUP, signal_handler); /* hangup signal */
+    signal(SIGTERM, signal_handler); /* software termination signal from kill */
+
+    return EXIT_SUCCESS;
 }
 
 void send_response(struct conn_t* conn, Response* response) {
     char sbuf[BUF_SIZE];
     sprintf(sbuf, "%s %d %s\r\n", response->http_version, response->status_code, response->reason_phrase);
-    rbsend(conn, sbuf, strlen(sbuf));
+    conn_send(conn, sbuf, strlen(sbuf));
     if (conn->close) {
         response_add_header(response, "Connection", "close");
     }
     Response_header* p = response->headers;
     while (!conn->failed && p != NULL) {
         sprintf(sbuf, "%s: %s\r\n", p->header_name, p->header_value);
-        rbsend(conn, sbuf, strlen(sbuf));
+        conn_send(conn, sbuf, strlen(sbuf));
         p = p->next;
     }
-    rbsend(conn, "\r\n", 2);
+    conn_send(conn, "\r\n", 2);
 }
 
 void send_file(struct conn_t* conn, FILE* file, int size) {
@@ -77,7 +111,7 @@ void send_file(struct conn_t* conn, FILE* file, int size) {
             conn->failed = 1;
             return;
         }
-        rbsend(conn, buf, nread);
+        conn_send(conn, buf, nread);
         size -= nread;
     }
 }
@@ -184,8 +218,12 @@ int parse_options(int argc, char* argv[]) {
         return 0;
     } 
     options.http_port = atoi(argv[1]);
+    options.https_port = atoi(argv[2]);
     options.log_filename = argv[3];
+    options.lock_file = argv[4];
     options.www_folder = argv[5];
+    options.key_file = argv[7];
+    options.crt_file = argv[8];
     return 1;
 }
 
@@ -193,17 +231,16 @@ int main(int argc, char* argv[])
 {
     if (!parse_options(argc, argv)) {
         fprintf(stdout, "usage: ./lisod <HTTP port> <HTTPS port> <log file> <lock file> <www folder> <CGI script path> <private key file> <certificate file>\n");
-        return 1;
+        exit(EXIT_FAILURE);
+    }
+    if (daemonize(options.lock_file) == EXIT_FAILURE) {
+        exit(EXIT_FAILURE);
     }
     fprintf(stdout, "----- Lisod Server -----\n");
-    pool_init(&pool, options.http_port, FD_SETSIZE);
-    if (!pool_start(&pool)) {
-        fprintf(stderr, "Failed to initialize connection pool\n");
-        return 1;
-    }
+    pool_init(&pool, FD_SETSIZE);
+    pool_start(&pool, options.http_port, options.https_port, options.key_file, options.crt_file);
     log_init(LOG_DEBUG, options.log_filename);
     struct conn_t* conn;
-    int sockfd;
 
     char buf[BUF_SIZE];
 
@@ -211,19 +248,15 @@ int main(int argc, char* argv[])
     while (1)
     {
         conn = pool_next_conn(&pool);
-        sockfd = conn->sockfd;
         int recvret;
-        recvret = recv(sockfd, buf, BUF_SIZE, 0);
-        if (recvret <= 0) {
-            conn->failed = 1;
-        }
+        recvret = conn_recv(conn, buf, BUF_SIZE);
         int buf_offset = 0;
         Request* request;
         while (!conn->failed && !conn->close && buf_offset != recvret) {
             request = parse(&(conn->parser), buf, &buf_offset, recvret);
             if (request != NULL) {
-                log(LOG_INFO, "handle request: %s %s %s\n", request->http_method, request->http_uri, request->http_version);
-                // always close connection 
+                log_(LOG_INFO, "handle request: %s %s %s\n", request->http_method, request->http_uri, request->http_version);
+                // always close connection according to project document
                 conn->close = 1;
                 if (!strcmp(request->http_method, "GET")) {
                     do_get(conn, request); 
@@ -235,12 +268,12 @@ int main(int argc, char* argv[])
                     send_error(conn, NOT_IMPLEMENTED);
                 }
                 free(request);    
+                break;
             }
         }
         if (conn->close || conn->failed) {
             pool_remove_conn(&pool, conn);
         }
     }
-    log_cleanup();
-    return 0;
+    return EXIT_SUCCESS;
 }

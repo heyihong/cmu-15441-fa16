@@ -10,6 +10,8 @@
 
 CC = gcc
 CFLAGS=-g -Wall
+CPPFLAGS = -I. -I/usr/local/opt/openssl/include
+LDFLAGS = -lssl -L/usr/local/opt/openssl/lib
 DEPS = parse.h y.tab.h
 
 default: all
@@ -17,7 +19,7 @@ default: all
 all: example lisod echo_client
 
 %.o : %.c $(DEPS)
-	$(CC) -c $(CFLAGS) $<
+	$(CC) -c $(CFLAGS) $< $(CPPFLAGS)
 
 lex.yy.c: lexer.l
 	flex $^
@@ -26,13 +28,13 @@ y.tab.c: parser.y
 	yacc -d $^
 
 example: y.tab.o lex.yy.o utils.o http.o parse.o example.o
-	$(CC) ${CFLAGS} -o $@ $^ -I.
+	$(CC) ${CFLAGS} -o $@ $^ ${LDFLAGS} 
 
 lisod: log.o y.tab.o lex.yy.o utils.o http.o parse.o pool.o lisod.o
-	$(CC) ${CFLAGS} -o $@ $^ -I.
+	$(CC) ${CFLAGS} -o $@ $^ ${LDFLAGS}
 
 echo_client: echo_client.o
-	$(CC) ${CFLAGS} -o $@ $^ -I.
+	$(CC) ${CFLAGS} -o $@ $^ ${LDFLAGS}
 
 clean:
 	@rm -f *.o lisod echo_client example lex.yy.c y.tab.c y.tab.h

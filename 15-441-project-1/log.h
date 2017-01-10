@@ -11,7 +11,7 @@ typedef enum LogLevel LogLevel;
 
 void log_init(LogLevel lv, const char* filename);
 
-void log(LogLevel lv, const char* fmt, ...);
+void log_(LogLevel lv, const char* fmt, ...);
 
 void log_cleanup();
 

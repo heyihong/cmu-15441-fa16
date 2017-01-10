@@ -1,0 +1,64 @@
+2017 01/10/17 23:20:21 DEBUG add new connection, sockfd = 7
+2017 01/10/17 23:20:21 DEBUG add new connection, sockfd = 8
+2017 01/10/17 23:20:21 DEBUG add new connection, sockfd = 9
+2017 01/10/17 23:20:21 DEBUG add new connection, sockfd = 10
+2017 01/10/17 23:20:21 DEBUG add new connection, sockfd = 11
+2017 01/10/17 23:20:21 DEBUG add new connection, sockfd = 12
+2017 01/10/17 23:20:21 DEBUG add new connection, sockfd = 13
+2017 01/10/17 23:20:21 DEBUG remove connection, sockfd = 9
+2017 01/10/17 23:20:21 DEBUG add new connection, sockfd = 9
+2017 01/10/17 23:20:21 DEBUG remove connection, sockfd = 11
+2017 01/10/17 23:20:21 DEBUG remove connection, sockfd = 13
+2017 01/10/17 23:20:28 DEBUG add new connection, sockfd = 11
+2017 01/10/17 23:20:28 DEBUG add new connection, sockfd = 13
+2017 01/10/17 23:20:28 DEBUG remove connection, sockfd = 11
+2017 01/10/17 23:20:28 DEBUG remove connection, sockfd = 13
+2017 01/10/17 23:20:28 DEBUG add new connection, sockfd = 11
+2017 01/10/17 23:20:28 DEBUG remove connection, sockfd = 11
+2017 01/10/17 23:20:28 DEBUG add new connection, sockfd = 11
+2017 01/10/17 23:20:28 INFO handle request: GET / HTTP/1.1
+2017 01/10/17 23:20:28 DEBUG remove connection, sockfd = 11
+2017 01/10/17 23:20:28 DEBUG add new connection, sockfd = 11
+2017 01/10/17 23:20:28 DEBUG remove connection, sockfd = 11
+2017 01/10/17 23:20:28 DEBUG add new connection, sockfd = 11
+2017 01/10/17 23:20:28 INFO handle request: GET /style.css HTTP/1.1
+2017 01/10/17 23:20:28 DEBUG remove connection, sockfd = 11
+2017 01/10/17 23:20:28 DEBUG add new connection, sockfd = 11
+2017 01/10/17 23:20:28 DEBUG remove connection, sockfd = 11
+2017 01/10/17 23:20:28 DEBUG add new connection, sockfd = 11
+2017 01/10/17 23:20:28 INFO handle request: GET /images/liso_header.png HTTP/1.1
+2017 01/10/17 23:20:28 DEBUG remove connection, sockfd = 11
+2017 01/10/17 23:20:30 DEBUG add new connection, sockfd = 11
+2017 01/10/17 23:20:30 DEBUG add new connection, sockfd = 13
+2017 01/10/17 23:20:30 DEBUG add new connection, sockfd = 14
+2017 01/10/17 23:20:30 DEBUG remove connection, sockfd = 11
+2017 01/10/17 23:20:30 DEBUG remove connection, sockfd = 13
+2017 01/10/17 23:20:30 DEBUG remove connection, sockfd = 14
+2017 01/10/17 23:20:30 DEBUG add new connection, sockfd = 11
+2017 01/10/17 23:20:30 DEBUG remove connection, sockfd = 11
+2017 01/10/17 23:20:30 DEBUG add new connection, sockfd = 11
+2017 01/10/17 23:20:30 INFO handle request: GET / HTTP/1.1
+2017 01/10/17 23:20:30 DEBUG remove connection, sockfd = 11
+2017 01/10/17 23:20:30 DEBUG add new connection, sockfd = 11
+2017 01/10/17 23:20:30 DEBUG remove connection, sockfd = 11
+2017 01/10/17 23:20:30 DEBUG add new connection, sockfd = 11
+2017 01/10/17 23:20:30 INFO handle request: GET /style.css HTTP/1.1
+2017 01/10/17 23:20:30 DEBUG remove connection, sockfd = 11
+2017 01/10/17 23:20:35 ERROR Error accepting (handshake) client SSL context.
+2017 01/10/17 23:20:37 DEBUG add new connection, sockfd = 11
+2017 01/10/17 23:20:37 INFO handle request: GET / HTTP/1.1
+2017 01/10/17 23:20:37 DEBUG remove connection, sockfd = 11
+2017 01/10/17 23:20:37 DEBUG add new connection, sockfd = 11
+2017 01/10/17 23:20:37 DEBUG add new connection, sockfd = 13
+2017 01/10/17 23:20:37 INFO handle request: GET /style.css HTTP/1.1
+2017 01/10/17 23:20:37 DEBUG remove connection, sockfd = 11
+2017 01/10/17 23:20:37 INFO handle request: GET /images/liso_header.png HTTP/1.1
+2017 01/10/17 23:20:37 DEBUG remove connection, sockfd = 13
+2017 01/10/17 23:20:37 DEBUG add new connection, sockfd = 11
+2017 01/10/17 23:20:37 INFO handle request: GET /favicon.ico HTTP/1.1
+2017 01/10/17 23:20:37 DEBUG remove connection, sockfd = 11
+2017 01/10/17 23:20:50 DEBUG remove connection, sockfd = 9
+2017 01/10/17 23:20:50 DEBUG remove connection, sockfd = 12
+2017 01/10/17 23:20:50 DEBUG remove connection, sockfd = 10
+2017 01/10/17 23:20:50 DEBUG remove connection, sockfd = 8
+2017 01/10/17 23:20:50 DEBUG remove connection, sockfd = 7

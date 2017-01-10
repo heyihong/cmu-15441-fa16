@@ -15,7 +15,7 @@ void log_init(LogLevel lv, const char* filename) {
 	assert(log_file != NULL);
 }
 
-void log(LogLevel lv, const char* fmt, ...) {
+void log_(LogLevel lv, const char* fmt, ...) {
 	if (lv < log_level) {
 		return;
 	}

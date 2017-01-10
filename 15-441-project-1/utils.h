@@ -7,6 +7,8 @@ int min(int x, int y);
 
 const char *get_filename_ext(const char *filename);
 
+const char* get_mimetype(const char* ext);
+
 void get_http_format_date(time_t* time, char* str, int size);
 
 #endif
