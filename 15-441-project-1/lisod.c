@@ -5,6 +5,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <signal.h>
 #include <fcntl.h>
 
 #include "pool.h"

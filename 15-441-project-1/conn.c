@@ -7,6 +7,7 @@ void conn_init(Conn* conn, int sockfd, SSL* ssl) {
   conn->sockfd = sockfd;
   conn->ssl = ssl;
   conn->cgi = NULL;
+  conn->handle = NULL;
   parser_init(&(conn->parser));
   buffer_init(&(conn->buf));
   conn->state = RECV_REQ_HEAD;
