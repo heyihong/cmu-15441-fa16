@@ -31,6 +31,9 @@ void log_(LogLevel lv, const char* fmt, ...) {
 		case LOG_INFO:
 			fprintf(log_file, "INFO ");
 			break;
+        case LOG_WARN:
+            fprintf(log_file, "WARN ");
+            break;
 		case LOG_ERROR:
 			fprintf(log_file, "ERROR ");
 			break;

@@ -5,9 +5,10 @@
 #include "http.h"
 #include "utils.h"
 
+static char tmpbuf[4096];
 
-Request_header* request_get_header(Request* request, const char* name) {
-	Request_header* p = request->headers;
+RequestHeader* request_get_header(Request* request, const char* name) {
+	RequestHeader* p = request->headers;
 	while (p != NULL) {
 		if (!strcmp(p->header_name, name)) {
 			break;
@@ -18,82 +19,94 @@ Request_header* request_get_header(Request* request, const char* name) {
 }
 
 void request_init(Request* request) {
-	memset(request->http_version, 0, sizeof(request->http_version));
-	memset(request->http_method, 0, sizeof(request->http_method));
-	memset(request->http_uri, 0, sizeof(request->http_uri));
+	request->http_version = NULL;
+	request->http_method = NULL;
+	request->abs_path = NULL;
+	request->query = NULL;
 	request->headers = NULL;	
 	request->content_length = 0;
 	request->message_body = NULL;
 }
 
 void request_destroy(Request* request) {
+	free(request->http_version);
+	free(request->http_method);
+	free(request->abs_path);
+	free(request->query);
 	if (request->message_body != NULL) {
 		free(request->message_body);
 	}	
-	Request_header* p = NULL;
+	RequestHeader* p = NULL;
 	while (request->headers != NULL) {
 		p = request->headers;
+		free(p->header_name);
+		free(p->header_value);
 		request->headers = p->next;
 		free(p);
 	}
 }
 
 void request_add_header(Request* request, const char* name, const char* value) {
-	Request_header* header = (Request_header*)malloc(sizeof(Request_header));
-	strcpy(header->header_name, name);
-	strcpy(header->header_value, value);	
+	RequestHeader* header = (RequestHeader*)malloc(sizeof(RequestHeader));
+	header->header_name = new_str(name);
+	header->header_value = new_str(value);
 	header->next = request->headers;
 	request->headers = header;
 }
 
 void response_init(Response* response, StatusCode status_code) {
-	response->headers = NULL	;
-	strcpy(response->http_version, "HTTP/1.1");	
+	response->headers = NULL;
+	response->http_version = new_str("HTTP/1.1");	
 	response->status_code = status_code;
 	switch (status_code) {
 		case OK:
-			strcpy(response->reason_phrase, "OK");
+			response->reason_phrase = new_str("OK");
 			break;
 		case NOT_FOUND:
-			strcpy(response->reason_phrase, "Not Found");
+			response->reason_phrase = new_str("Not Found");
 			break;
 		case LENGTH_REQUIRED:
-			strcpy(response->reason_phrase, "Length Required");
+			response->reason_phrase = new_str("Length Required");
 			break;
 		case INTERNAL_SERVER_ERROR:
-			strcpy(response->reason_phrase, "Internal Server Error");
+			response->reason_phrase = new_str("Internal Server Error");
 			break;
 		case NOT_IMPLEMENTED:
-			strcpy(response->reason_phrase, "Not Implemented");
+			response->reason_phrase = new_str("Not Implemented");
 			break;
 		case SERVICE_UNAVAILABLE:
-			strcpy(response->reason_phrase, "Service Unavailable");
+			response->reason_phrase = new_str("Service Unavailable");
 			break;
 		case HTTP_VERSION_NOT_SUPPORTED:
-			strcpy(response->reason_phrase, "HTTP Version not supported");
+			response->reason_phrase = new_str("HTTP Version not supported");
 			break;
 	}
-	char str[4096];
+	char* str = tmpbuf;
 	time_t now = time(0);
-  	get_http_format_date(&now, str, 4096);
+  	get_http_format_date(&now, str, sizeof(tmpbuf));
 	// auto generate server and date header
 	response_add_header(response, "Server", "Liso/1.0");
 	response_add_header(response, "Date", str);
+	response_add_header(response, "Connection", "close");
 }
 
 void response_destroy(Response* response) {
-	Response_header* p = NULL;
+	free(response->http_version);
+	free(response->reason_phrase);
+	ResponseHeader* p = NULL;
 	while (response->headers != NULL) {
 		p = response->headers;
+		free(p->header_name);
+		free(p->header_value);
 		response->headers = p->next;
 		free(p);
 	}
 }
 
 void response_add_header(Response* response, const char* name, const char* value) {
-	Response_header* header = (Response_header*)malloc(sizeof(Response_header));
-	strcpy(header->header_name, name);
-	strcpy(header->header_value, value);
+	ResponseHeader* header = (ResponseHeader*)malloc(sizeof(ResponseHeader));
+	header->header_name = new_str(name);
+	header->header_value = new_str(value);
 	header->next = response->headers;
 	response->headers = header;
 }

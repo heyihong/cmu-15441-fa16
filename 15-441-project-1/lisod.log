@@ -1,64 +1,301 @@
-2017 01/10/17 23:20:21 DEBUG add new connection, sockfd = 7
-2017 01/10/17 23:20:21 DEBUG add new connection, sockfd = 8
-2017 01/10/17 23:20:21 DEBUG add new connection, sockfd = 9
-2017 01/10/17 23:20:21 DEBUG add new connection, sockfd = 10
-2017 01/10/17 23:20:21 DEBUG add new connection, sockfd = 11
-2017 01/10/17 23:20:21 DEBUG add new connection, sockfd = 12
-2017 01/10/17 23:20:21 DEBUG add new connection, sockfd = 13
-2017 01/10/17 23:20:21 DEBUG remove connection, sockfd = 9
-2017 01/10/17 23:20:21 DEBUG add new connection, sockfd = 9
-2017 01/10/17 23:20:21 DEBUG remove connection, sockfd = 11
-2017 01/10/17 23:20:21 DEBUG remove connection, sockfd = 13
-2017 01/10/17 23:20:28 DEBUG add new connection, sockfd = 11
-2017 01/10/17 23:20:28 DEBUG add new connection, sockfd = 13
-2017 01/10/17 23:20:28 DEBUG remove connection, sockfd = 11
-2017 01/10/17 23:20:28 DEBUG remove connection, sockfd = 13
-2017 01/10/17 23:20:28 DEBUG add new connection, sockfd = 11
-2017 01/10/17 23:20:28 DEBUG remove connection, sockfd = 11
-2017 01/10/17 23:20:28 DEBUG add new connection, sockfd = 11
-2017 01/10/17 23:20:28 INFO handle request: GET / HTTP/1.1
-2017 01/10/17 23:20:28 DEBUG remove connection, sockfd = 11
-2017 01/10/17 23:20:28 DEBUG add new connection, sockfd = 11
-2017 01/10/17 23:20:28 DEBUG remove connection, sockfd = 11
-2017 01/10/17 23:20:28 DEBUG add new connection, sockfd = 11
-2017 01/10/17 23:20:28 INFO handle request: GET /style.css HTTP/1.1
-2017 01/10/17 23:20:28 DEBUG remove connection, sockfd = 11
-2017 01/10/17 23:20:28 DEBUG add new connection, sockfd = 11
-2017 01/10/17 23:20:28 DEBUG remove connection, sockfd = 11
-2017 01/10/17 23:20:28 DEBUG add new connection, sockfd = 11
-2017 01/10/17 23:20:28 INFO handle request: GET /images/liso_header.png HTTP/1.1
-2017 01/10/17 23:20:28 DEBUG remove connection, sockfd = 11
-2017 01/10/17 23:20:30 DEBUG add new connection, sockfd = 11
-2017 01/10/17 23:20:30 DEBUG add new connection, sockfd = 13
-2017 01/10/17 23:20:30 DEBUG add new connection, sockfd = 14
-2017 01/10/17 23:20:30 DEBUG remove connection, sockfd = 11
-2017 01/10/17 23:20:30 DEBUG remove connection, sockfd = 13
-2017 01/10/17 23:20:30 DEBUG remove connection, sockfd = 14
-2017 01/10/17 23:20:30 DEBUG add new connection, sockfd = 11
-2017 01/10/17 23:20:30 DEBUG remove connection, sockfd = 11
-2017 01/10/17 23:20:30 DEBUG add new connection, sockfd = 11
-2017 01/10/17 23:20:30 INFO handle request: GET / HTTP/1.1
-2017 01/10/17 23:20:30 DEBUG remove connection, sockfd = 11
-2017 01/10/17 23:20:30 DEBUG add new connection, sockfd = 11
-2017 01/10/17 23:20:30 DEBUG remove connection, sockfd = 11
-2017 01/10/17 23:20:30 DEBUG add new connection, sockfd = 11
-2017 01/10/17 23:20:30 INFO handle request: GET /style.css HTTP/1.1
-2017 01/10/17 23:20:30 DEBUG remove connection, sockfd = 11
-2017 01/10/17 23:20:35 ERROR Error accepting (handshake) client SSL context.
-2017 01/10/17 23:20:37 DEBUG add new connection, sockfd = 11
-2017 01/10/17 23:20:37 INFO handle request: GET / HTTP/1.1
-2017 01/10/17 23:20:37 DEBUG remove connection, sockfd = 11
-2017 01/10/17 23:20:37 DEBUG add new connection, sockfd = 11
-2017 01/10/17 23:20:37 DEBUG add new connection, sockfd = 13
-2017 01/10/17 23:20:37 INFO handle request: GET /style.css HTTP/1.1
-2017 01/10/17 23:20:37 DEBUG remove connection, sockfd = 11
-2017 01/10/17 23:20:37 INFO handle request: GET /images/liso_header.png HTTP/1.1
-2017 01/10/17 23:20:37 DEBUG remove connection, sockfd = 13
-2017 01/10/17 23:20:37 DEBUG add new connection, sockfd = 11
-2017 01/10/17 23:20:37 INFO handle request: GET /favicon.ico HTTP/1.1
-2017 01/10/17 23:20:37 DEBUG remove connection, sockfd = 11
-2017 01/10/17 23:20:50 DEBUG remove connection, sockfd = 9
-2017 01/10/17 23:20:50 DEBUG remove connection, sockfd = 12
-2017 01/10/17 23:20:50 DEBUG remove connection, sockfd = 10
-2017 01/10/17 23:20:50 DEBUG remove connection, sockfd = 8
-2017 01/10/17 23:20:50 DEBUG remove connection, sockfd = 7
+2017 01/13/17 23:15:05 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:11 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:11 DEBUG add new connection, sockfd = 6
+2017 01/13/17 23:15:11 DEBUG Connection 6 readable = 0, writable = 0
+2017 01/13/17 23:15:11 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:11 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:11 DEBUG add new connection, sockfd = 7
+2017 01/13/17 23:15:11 DEBUG Connection 7 readable = 0, writable = 0
+2017 01/13/17 23:15:11 DEBUG Connection 6 readable = 0, writable = 0
+2017 01/13/17 23:15:11 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:11 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:11 DEBUG add new connection, sockfd = 8
+2017 01/13/17 23:15:11 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:11 DEBUG Connection 7 readable = 0, writable = 0
+2017 01/13/17 23:15:11 DEBUG Connection 6 readable = 0, writable = 0
+2017 01/13/17 23:15:11 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:11 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:11 DEBUG add new connection, sockfd = 9
+2017 01/13/17 23:15:11 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:11 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:11 DEBUG Connection 7 readable = 0, writable = 0
+2017 01/13/17 23:15:11 DEBUG Connection 6 readable = 0, writable = 0
+2017 01/13/17 23:15:11 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:13 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:13 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:13 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:13 DEBUG Connection 7 readable = 0, writable = 0
+2017 01/13/17 23:15:13 DEBUG Connection 6 readable = 1, writable = 0
+2017 01/13/17 23:15:13 INFO handle request: GET / HTTP/1.1
+2017 01/13/17 23:15:13 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:13 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:13 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:13 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:13 DEBUG Connection 7 readable = 0, writable = 0
+2017 01/13/17 23:15:13 DEBUG Connection 6 readable = 0, writable = 1
+2017 01/13/17 23:15:13 DEBUG remove connection, sockfd = 6
+2017 01/13/17 23:15:13 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:14 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:14 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:14 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:14 DEBUG Connection 7 readable = 1, writable = 0
+2017 01/13/17 23:15:14 INFO handle request: GET / HTTP/1.1
+2017 01/13/17 23:15:14 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:14 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:14 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:14 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:14 DEBUG Connection 7 readable = 0, writable = 1
+2017 01/13/17 23:15:14 DEBUG remove connection, sockfd = 7
+2017 01/13/17 23:15:14 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG add new connection, sockfd = 6
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG add new connection, sockfd = 7
+2017 01/13/17 23:15:20 DEBUG Connection 7 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG Connection 7 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 1, writable = 0
+2017 01/13/17 23:15:20 DEBUG remove connection, sockfd = 6
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG Connection 7 readable = 1, writable = 0
+2017 01/13/17 23:15:20 DEBUG remove connection, sockfd = 7
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG add new connection, sockfd = 6
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 1, writable = 0
+2017 01/13/17 23:15:20 DEBUG remove connection, sockfd = 6
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG add new connection, sockfd = 6
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 1, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 1, writable = 0
+2017 01/13/17 23:15:20 INFO handle request: GET / HTTP/1.1
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 0, writable = 1
+2017 01/13/17 23:15:20 DEBUG remove connection, sockfd = 6
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG add new connection, sockfd = 6
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 1, writable = 0
+2017 01/13/17 23:15:20 DEBUG remove connection, sockfd = 6
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG add new connection, sockfd = 6
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 1, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 1, writable = 0
+2017 01/13/17 23:15:20 INFO handle request: GET /style.css HTTP/1.1
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 0, writable = 1
+2017 01/13/17 23:15:20 DEBUG remove connection, sockfd = 6
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG add new connection, sockfd = 6
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 1, writable = 0
+2017 01/13/17 23:15:20 DEBUG remove connection, sockfd = 6
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG add new connection, sockfd = 6
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 1, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 1, writable = 0
+2017 01/13/17 23:15:20 INFO handle request: GET /images/liso_header.png HTTP/1.1
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 0, writable = 1
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 0, writable = 1
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 0, writable = 1
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 0, writable = 1
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:20 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:20 DEBUG Connection 6 readable = 0, writable = 1
+2017 01/13/17 23:15:20 DEBUG remove connection, sockfd = 6
+2017 01/13/17 23:15:20 DEBUG Connection 9 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:20 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:22 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:22 DEBUG Connection 9 readable = 1, writable = 0
+2017 01/13/17 23:15:22 DEBUG remove connection, sockfd = 9
+2017 01/13/17 23:15:22 DEBUG Connection 8 readable = 1, writable = 0
+2017 01/13/17 23:15:22 DEBUG remove connection, sockfd = 8
+2017 01/13/17 23:15:22 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:22 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:22 DEBUG add new connection, sockfd = 6
+2017 01/13/17 23:15:22 DEBUG Connection 6 readable = 0, writable = 0
+2017 01/13/17 23:15:22 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:22 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:22 DEBUG add new connection, sockfd = 7
+2017 01/13/17 23:15:22 DEBUG Connection 7 readable = 0, writable = 0
+2017 01/13/17 23:15:22 DEBUG Connection 6 readable = 0, writable = 0
+2017 01/13/17 23:15:22 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:22 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:22 DEBUG add new connection, sockfd = 8
+2017 01/13/17 23:15:22 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:22 DEBUG Connection 7 readable = 0, writable = 0
+2017 01/13/17 23:15:22 DEBUG Connection 6 readable = 1, writable = 0
+2017 01/13/17 23:15:22 DEBUG remove connection, sockfd = 6
+2017 01/13/17 23:15:22 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:22 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:22 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:22 DEBUG Connection 7 readable = 1, writable = 0
+2017 01/13/17 23:15:22 DEBUG remove connection, sockfd = 7
+2017 01/13/17 23:15:22 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:22 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:22 DEBUG Connection 8 readable = 1, writable = 0
+2017 01/13/17 23:15:22 DEBUG remove connection, sockfd = 8
+2017 01/13/17 23:15:22 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:22 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:22 DEBUG add new connection, sockfd = 6
+2017 01/13/17 23:15:22 DEBUG Connection 6 readable = 0, writable = 0
+2017 01/13/17 23:15:22 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:22 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:22 DEBUG Connection 6 readable = 1, writable = 0
+2017 01/13/17 23:15:22 DEBUG remove connection, sockfd = 6
+2017 01/13/17 23:15:22 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:22 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:22 DEBUG add new connection, sockfd = 6
+2017 01/13/17 23:15:22 DEBUG Connection 6 readable = 0, writable = 0
+2017 01/13/17 23:15:22 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:22 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:22 DEBUG Connection 6 readable = 1, writable = 0
+2017 01/13/17 23:15:22 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:22 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:22 DEBUG Connection 6 readable = 1, writable = 0
+2017 01/13/17 23:15:22 INFO handle request: GET / HTTP/1.1
+2017 01/13/17 23:15:22 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:22 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:22 DEBUG Connection 6 readable = 0, writable = 1
+2017 01/13/17 23:15:22 DEBUG remove connection, sockfd = 6
+2017 01/13/17 23:15:22 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:22 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:22 DEBUG add new connection, sockfd = 6
+2017 01/13/17 23:15:22 DEBUG Connection 6 readable = 0, writable = 0
+2017 01/13/17 23:15:22 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:22 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:22 DEBUG Connection 6 readable = 1, writable = 0
+2017 01/13/17 23:15:22 DEBUG remove connection, sockfd = 6
+2017 01/13/17 23:15:22 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:22 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:22 DEBUG add new connection, sockfd = 6
+2017 01/13/17 23:15:22 DEBUG Connection 6 readable = 0, writable = 0
+2017 01/13/17 23:15:22 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:22 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:22 DEBUG Connection 6 readable = 1, writable = 0
+2017 01/13/17 23:15:22 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:22 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:22 DEBUG Connection 6 readable = 1, writable = 0
+2017 01/13/17 23:15:22 INFO handle request: GET /style.css HTTP/1.1
+2017 01/13/17 23:15:22 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:22 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:22 DEBUG Connection 6 readable = 0, writable = 1
+2017 01/13/17 23:15:22 DEBUG remove connection, sockfd = 6
+2017 01/13/17 23:15:22 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:25 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:25 DEBUG add new connection, sockfd = 6
+2017 01/13/17 23:15:25 DEBUG Connection 6 readable = 0, writable = 0
+2017 01/13/17 23:15:25 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:25 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:25 DEBUG add new connection, sockfd = 7
+2017 01/13/17 23:15:25 DEBUG Connection 7 readable = 0, writable = 0
+2017 01/13/17 23:15:25 DEBUG Connection 6 readable = 0, writable = 0
+2017 01/13/17 23:15:25 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:25 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:25 DEBUG add new connection, sockfd = 8
+2017 01/13/17 23:15:25 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:25 DEBUG Connection 7 readable = 0, writable = 0
+2017 01/13/17 23:15:25 DEBUG Connection 6 readable = 1, writable = 0
+2017 01/13/17 23:15:25 DEBUG remove connection, sockfd = 6
+2017 01/13/17 23:15:25 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:25 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:25 DEBUG Connection 8 readable = 0, writable = 0
+2017 01/13/17 23:15:25 DEBUG Connection 7 readable = 1, writable = 0
+2017 01/13/17 23:15:25 DEBUG remove connection, sockfd = 7
+2017 01/13/17 23:15:25 DEBUG The connection pool is waiting for io
+2017 01/13/17 23:15:25 DEBUG The connection pool start handling io
+2017 01/13/17 23:15:25 DEBUG Connection 8 readable = 1, writable = 0
+2017 01/13/17 23:15:25 DEBUG remove connection, sockfd = 8

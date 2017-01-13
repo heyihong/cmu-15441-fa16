@@ -5,6 +5,14 @@
 
 int min(int x, int y);
 
+int max(int x, int y);
+
+int is_valid_port(int port);
+
+char* new_str(const char* str);
+
+char* new_strn(const char* str, int n);
+
 const char *get_filename_ext(const char *filename);
 
 const char* get_mimetype(const char* ext);

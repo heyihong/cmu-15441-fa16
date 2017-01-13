@@ -4,7 +4,8 @@
 enum LogLevel {
 	LOG_DEBUG = 0,
 	LOG_INFO = 1,
-	LOG_ERROR = 2 
+    LOG_WARN = 2,
+	LOG_ERROR = 3 
 };
 
 typedef enum LogLevel LogLevel;

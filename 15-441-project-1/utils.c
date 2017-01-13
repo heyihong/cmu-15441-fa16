@@ -1,9 +1,30 @@
 #include <string.h>
+#include <stdlib.h>
 
 #include "utils.h"
 
 int min(int x, int y) {
 	return x < y ? x : y;
+}
+
+int max(int x, int y) {
+    return x < y ? y : x;
+}
+
+int is_valid_port(int port) {
+  return port > 0 && port < 65536;
+}
+
+char* new_str(const char* str) {
+    char* p = (char*)malloc(strlen(str) + 1);
+    strcpy(p, str);
+    return p;
+}
+
+char* new_strn(const char* str, int n) {
+    char* p = (char*)malloc(n + 1);
+    strncpy(p, str, n);
+    return p; 
 }
 
 const char *get_filename_ext(const char *filename) {

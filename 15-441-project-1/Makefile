@@ -16,7 +16,7 @@ DEPS = parse.h y.tab.h
 
 default: all
 
-all: example lisod echo_client
+all: example lisod
 
 %.o : %.c $(DEPS)
 	$(CC) -c $(CFLAGS) $< $(CPPFLAGS)
@@ -27,13 +27,10 @@ lex.yy.c: lexer.l
 y.tab.c: parser.y
 	yacc -d $^
 
-example: y.tab.o lex.yy.o utils.o http.o parse.o example.o
+example: y.tab.o lex.yy.o utils.o http.o buffer.o parse.o example.o
 	$(CC) ${CFLAGS} -o $@ $^ ${LDFLAGS} 
 
-lisod: log.o y.tab.o lex.yy.o utils.o http.o parse.o pool.o lisod.o
-	$(CC) ${CFLAGS} -o $@ $^ ${LDFLAGS}
-
-echo_client: echo_client.o
+lisod: log.o y.tab.o lex.yy.o utils.o http.o buffer.o parse.o handle.o cgi.o conn.o pool.o lisod.o
 	$(CC) ${CFLAGS} -o $@ $^ ${LDFLAGS}
 
 clean:

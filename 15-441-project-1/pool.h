@@ -3,51 +3,36 @@
 
 #include <openssl/ssl.h>
 
-#include "parse.h"
+#include "conn.h"
 
-struct conn_t {
-	int sockfd;
-	// use SSL if ssl != NULL	
-    SSL *ssl;
-	int failed;
-	int close;
-	Parser parser;
-	struct conn_t* prev;
-	struct conn_t* next;
-};
-
-struct pool_t {
+struct Pool {
 	int max_conns;
 	int num_conns;
-	struct conn_t* conns; 
-	struct conn_t* conn_iter;
+	Conn* conns; 
 	SSL_CTX* ssl_context;	
 
 	int http_sock;
 	int https_sock;
+    fd_set writefs;
 	fd_set readfs;
 };
 
-void conn_init(struct conn_t* conn, int sockfd, SSL* ssl);
+typedef struct Pool Pool;
 
-void conn_send(struct conn_t* conn, char*b, int len);
+void pool_init(Pool* pool, int max_conns);
 
-int conn_recv(struct conn_t* conn, char*b, int len);
+void pool_destroy(Pool* pool);
 
-void conn_destroy(struct conn_t* conn);
+void pool_start(Pool* pool, int http_port, int https_port, const char* key_file, const char* crt_file);
 
-void pool_init(struct pool_t* pool, int max_conns);
+int pool_is_full(Pool* pool);
 
-void pool_destroy(struct pool_t* pool);
+void pool_add_conn(Pool* pool, Conn* new_conn);
 
-void pool_start(struct pool_t* pool, int http_port, int https_port, const char* key_file, const char* crt_file);
+void pool_remove_conn(Pool* pool, Conn* conn);
 
-int pool_is_full(struct pool_t* pool);
+void pool_wait_io(Pool* pool);
 
-void pool_add_conn(struct pool_t* pool, struct conn_t* new_conn);
-
-void pool_remove_conn(struct pool_t* pool, struct conn_t* conn);
-
-struct conn_t* pool_next_conn(struct pool_t* pool);
+Conn* pool_next_conn(Pool* pool);
 
 #endif

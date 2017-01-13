@@ -5,6 +5,7 @@
  */
 
 %{
+#include "utils.h"
 #include "parse.h"
 
 /* Define YACCDEBUG to enable debug messages for this lex file */
@@ -188,10 +189,19 @@ t_ws {
 
 request_line: token t_sp text t_sp text t_crlf {
 	YPRINTF("request_Line:\n%s\n%s\n%s\n",$1, $3,$5);
-  strcpy(parsing_request->http_method, $1);
-	strcpy(parsing_request->http_uri, $3);
-	strcpy(parsing_request->http_version, $5);
-}
+
+  	parsing_request->http_method = new_str($1);
+  	const char* qm = strstr($3, "?");
+  	if (qm == NULL) {
+  		parsing_request->abs_path = new_str($3);
+        parsing_request->query = new_str("");
+  	} else {
+  		parsing_request->abs_path = new_strn($3, qm - $3);
+  		parsing_request->query = new_str(qm + 1);
+  	}
+
+  	parsing_request->http_version = new_str($5);
+}; 
 
 request_header: token ows t_colon ows text ows t_crlf {
 	YPRINTF("request_Header:\n%s\n%s\n",$1,$5);

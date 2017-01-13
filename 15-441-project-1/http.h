@@ -1,6 +1,8 @@
 #ifndef __HTTP_H__
 #define __HTTP_H__
 
+#define HTTP_HEADER_MAX_SIZE (1 << 14)
+
 enum StatusCode {
 	OK = 200,
 	NOT_FOUND = 404,
@@ -12,46 +14,47 @@ enum StatusCode {
 };
 
 // Request Header field
-struct Request_header
+struct RequestHeader
 {
-	char header_name[4096];
-	char header_value[4096];
-	struct Request_header* next;
+	char* header_name;
+	char* header_value;
+	struct RequestHeader* next;
 };
 
 // Request
 struct Request
 {
-	char http_version[50];
-	char http_method[50];
-	char http_uri[4096];
-	struct Request_header *headers;	
+	char* http_version;
+	char* http_method;
+	char* abs_path;
+	char* query;
+	struct RequestHeader *headers;	
 	int content_length;
 	char* message_body;
 };
 
 // Response Header field
-struct Response_header
+struct ResponseHeader
 {
-	char header_name[4096];
-	char header_value[4096];
-	struct Response_header* next;
+	char* header_name;
+	char* header_value;
+	struct ResponseHeader* next;
 };
 
 // Response
 struct Response
 {
-	char http_version[50];
+	char* http_version;
 	enum StatusCode status_code; 
-	char reason_phrase[50];
-	struct Response_header *headers;
+	char* reason_phrase;
+	struct ResponseHeader *headers;
 };
 
-typedef struct Request_header Request_header;
+typedef struct RequestHeader RequestHeader;
 
 typedef struct Request Request;
 
-typedef struct Response_header Response_header;
+typedef struct ResponseHeader ResponseHeader;
 
 typedef struct Response Response;
 
@@ -63,7 +66,7 @@ void request_destroy(Request* request);
 
 void request_add_header(Request* request, const char* name, const char* value);
 
-Request_header* request_get_header(Request* request, const char* name);
+RequestHeader* request_get_header(Request* request, const char* name);
 
 void response_init(Response* response, StatusCode status_code);
 
