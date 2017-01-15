@@ -2,6 +2,7 @@
 #define __CONN_H__
 
 #include <openssl/ssl.h>
+#include <netinet/in.h>
 
 #include "buffer.h"
 #include "parse.h"
@@ -22,6 +23,7 @@ typedef enum ConnState ConnState;
 
 struct Conn {
     int sockfd;
+    struct in_addr addr;
     SSL* ssl;
     Handle* handle;
     Cgi* cgi;
@@ -34,7 +36,7 @@ struct Conn {
 
 typedef struct Conn Conn;
 
-void conn_init(Conn* conn, int sockfd, SSL* ssl);
+void conn_init(Conn* conn, int sockfd, SSL* ssl, struct in_addr addr);
 
 void conn_send(Conn* conn);
 

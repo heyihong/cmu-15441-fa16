@@ -17,12 +17,12 @@
 struct {
     int http_port;
     int https_port;
-    const char* lock_file;
-    const char* log_file;
-    const char* www_folder; 
-    const char* cgi_script;
-    const char* key_file;
-    const char* crt_file;
+    char* lock_file;
+    char* log_file;
+    char* www_folder; 
+    char* cgi_script;
+    char* key_file;
+    char* crt_file;
 } options;
 
 Pool pool;
@@ -103,18 +103,24 @@ int parse_options(int argc, char* argv[]) {
     return is_valid_port(options.http_port) && is_valid_port(options.https_port);
 }
 
-void handle_conn(Conn* conn) {
-    int readable = FD_ISSET(conn->sockfd, &(pool.readfs));
-    int writable = FD_ISSET(conn->sockfd, &(pool.writefs));
-    log_(LOG_DEBUG, "Connection %d readable = %d, writable = %d\n", conn->sockfd, readable > 0, writable > 0);
-    // int cgi_readable = conn->cgi != NULL && FD_ISSET(conn->cgi->outfd, &(pool.readfs));
-    // int cgi_writeable = conn->cgi != NULL && FD_ISSET(conn->cgi->infd, &(pool.writefs));
+void handle_conn(Conn* conn, fd_set* readfs, fd_set* writefs) {
+    int readable = FD_ISSET(conn->sockfd, readfs);
+    int writable = FD_ISSET(conn->sockfd, writefs);
+    int cgi_readable = conn->cgi != NULL && FD_ISSET(conn->cgi->outfd, readfs);
+    int cgi_writable = conn->cgi != NULL && FD_ISSET(conn->cgi->infd, writefs);
+    log_(LOG_DEBUG, "Handling connection: sockfd = %d, readable = %d, writable = %d, cgi_readable = %d, cgi_writable = %d\n", 
+        conn->sockfd, readable > 0, writable > 0, cgi_readable > 0, cgi_writable > 0);
     while (1) {
         switch (conn->state) {
             case RECV_REQ_HEAD: {
+                int need_conn_recv = !buffer_is_full(&(conn->buf));
                 Request* request = parser_parse(&(conn->parser), &(conn->buf));
                 if (request != NULL) {
-                    if (strstr(request->abs_path, "/cig/") == request->abs_path) {
+                    log_(LOG_INFO, "handle request: %s %s %s\n", request->http_method, request->abs_path, request->http_version);
+                    if (strstr(request->abs_path, "/cgi/") == request->abs_path) {
+                        conn->cgi = (Cgi*)malloc(sizeof(Cgi));
+                        cgi_init(conn->cgi, options.cgi_script, request, conn->addr, 
+                            conn->ssl == NULL ? options.http_port : options.https_port);
                         conn->state = CGI_RECV_REQ_BODY;
                     } else {
                         conn->handle = (Handle*)malloc(sizeof(Handle));
@@ -123,38 +129,100 @@ void handle_conn(Conn* conn) {
                     }
                 } else if (conn->parser.state == STATE_FAILED) {
                     conn->state = CONN_FAILED;
-                } else if (readable) {
+                } else if (need_conn_recv && readable) {
                     conn_recv(conn);
                     readable = 0;
                 } else {
+                    if (need_conn_recv) {
+                        pool_add_readfd(&pool, conn->sockfd);
+                    }                    
                     return;
                 }
             }
             break;
             case RECV_REQ_BODY: {
-                if (conn->handle->request->content_length == 0) {
+                int need_conn_recv = !buffer_is_full(&(conn->buf));
+                if (conn->handle->state != HANDLE_RECV) {
+                    // discard remain bytes in buffer
+                    buffer_init(&(conn->buf));
                     conn->state = SEND_RES;
                 } else if (!buffer_is_empty(&(conn->buf))) {
                     handle_write(conn->handle, &(conn->buf));
-                } else if (readable) {
+                } else if (need_conn_recv && readable) {
                     conn_recv(conn);
                     readable = 0;
                 } else {
+                    if (need_conn_recv) {
+                        pool_add_readfd(&pool, conn->sockfd);
+                    }
                     return;
                 }
             }
             break; 
             case SEND_RES: { 
-                handle_read(conn->handle, &(conn->buf));
+                int need_conn_send = !buffer_is_empty(&(conn->buf));
                 if (conn->handle->state == HANDLE_FAILED) {
                     conn->state = CONN_FAILED;
-                } else if (writable) {
+                } else if (!buffer_is_full(&(conn->buf)) 
+                    && (conn->handle->state == HANDLE_PROCESS || conn->handle->state == HANDLE_SEND)) {
+                    handle_read(conn->handle, &(conn->buf));
+                } else if (need_conn_send && writable) {
                     conn_send(conn);
                     writable = 0; 
-                    if (buffer_is_empty(&(conn->buf)) && conn->handle->state == HANDLE_FINISHED) {
-                        conn->state = CONN_CLOSE; 
-                    } 
+                } else if (buffer_is_empty(&(conn->buf)) && conn->handle->state == HANDLE_FINISHED) {
+                    conn->state = CONN_CLOSE; 
                 } else {
+                    if (need_conn_send) {
+                        pool_add_writefd(&pool, conn->sockfd);
+                    }
+                    return;
+                }
+            }
+            break;
+            case CGI_RECV_REQ_BODY: {
+                int need_cgi_write = !buffer_is_empty(&(conn->buf));
+                int need_conn_recv = !buffer_is_full(&(conn->buf));
+                if (conn->cgi->state != CGI_RECV) {
+                    // discard remain bytes in buffer
+                    buffer_init(&(conn->buf));
+                    conn->state = CGI_SEND_RES;
+                } else if (need_cgi_write && cgi_writable) {
+                    cgi_write(conn->cgi, &(conn->buf));
+                    cgi_writable = 0;
+                } else if (need_conn_recv && readable) {
+                    conn_recv(conn);
+                    readable = 0;
+                } else {
+                    if (need_cgi_write) {
+                        pool_add_writefd(&pool, conn->cgi->infd);
+                    }
+                    if (need_conn_recv) {
+                        pool_add_readfd(&pool, conn->sockfd); 
+                    }
+                    return;
+                }
+            }
+            break;
+            case CGI_SEND_RES: {
+                int need_cgi_read = !buffer_is_full(&(conn->buf)) && conn->cgi->state == CGI_SEND;
+                int need_conn_send = !buffer_is_empty(&(conn->buf));
+                if (conn->cgi->state == CGI_FAILED) {
+                    conn->state = CONN_FAILED;
+                } else if (need_cgi_read && cgi_readable) {
+                    cgi_read(conn->cgi, &(conn->buf));
+                    cgi_readable = 0;
+                } else if (need_conn_send && writable) {
+                    conn_send(conn);
+                    writable = 0; 
+                } else if (buffer_is_empty(&(conn->buf)) && conn->cgi->state == CGI_FINISHED) {
+                    conn->state = CONN_CLOSE; 
+                } else {
+                    if (need_conn_send) {
+                        pool_add_writefd(&pool, conn->sockfd);
+                    }
+                    if (need_cgi_read) {
+                        pool_add_readfd(&pool, conn->cgi->outfd); 
+                    }
                     return;
                 }
             }
@@ -166,11 +234,6 @@ void handle_conn(Conn* conn) {
             case CONN_FAILED: {
                 pool_remove_conn(&pool, conn);
                 return;
-            }
-            break;
-            case CGI_RECV_REQ_BODY: case CGI_SEND_RES: {
-                log_(LOG_ERROR, "CGI not implemented\n");
-                conn->state = CONN_CLOSE;
             }
             break;
         }
@@ -193,14 +256,17 @@ int main(int argc, char* argv[])
     /* finally, loop waiting for input and then write it back */
     while (1)
     {
-        pool_wait_io(&pool);
+        fd_set readfs = pool.readfs;
+        fd_set writefs = pool.writefs;
+        pool_clear_fs(&pool);
         Conn* p = pool.conns;
         while (p != NULL) {
             Conn* conn = p;
             p = p->next;
             // conn may be removed
-            handle_conn(conn);
+            handle_conn(conn, &readfs, &writefs);
         }
+        pool_wait_io(&pool);
     }
 
     return EXIT_SUCCESS;

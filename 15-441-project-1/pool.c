@@ -100,11 +100,28 @@ static void pool_https_start(Pool* pool,
   /************ END SERVER SOCKET SETUP ************/
 }
 
+void pool_clear_fs(Pool* pool) {
+  pool->maxfd = 0;
+  FD_ZERO(&(pool->readfs));
+  FD_ZERO(&(pool->writefs));
+}
+
+void pool_add_readfd(Pool* pool, int fd) {
+  FD_SET(fd, &(pool->readfs));
+  pool->maxfd = max(pool->maxfd, fd);
+}
+
+void pool_add_writefd(Pool* pool, int fd) {
+  FD_SET(fd, &(pool->writefs));
+  pool->maxfd = max(pool->maxfd, fd);
+}
+
 void pool_init(Pool* pool, int max_conns) {
   pool->max_conns = max_conns;
   pool->num_conns = 0;
   pool->conns = NULL;
   pool->ssl_context = NULL;
+  pool_clear_fs(pool);
 }
 
 void pool_start(Pool* pool, int http_port, int https_port, const char* key_file, const char* crt_file) {
@@ -153,30 +170,9 @@ void pool_remove_conn(Pool* pool, Conn* conn) {
 
 void pool_wait_io(Pool* pool) {
   log_(LOG_DEBUG, "The connection pool is waiting for io\n");
-  Conn* conn = pool->conns;
-  FD_ZERO(&(pool->readfs));
-  FD_ZERO(&(pool->writefs));
-  FD_SET(pool->http_sock, &(pool->readfs));
-  FD_SET(pool->https_sock, &(pool->readfs));
-  int max_fd = max(pool->http_sock, pool->https_sock);
-  while (conn != NULL) {
-    int sockfd = conn->sockfd;
-    if (conn->state == RECV_REQ_HEAD || conn->state == RECV_REQ_BODY) {
-      FD_SET(sockfd, &(pool->readfs));
-      max_fd = max(max_fd, sockfd);
-    } else if (conn->state == SEND_RES) {
-      FD_SET(sockfd, &(pool->writefs));
-      max_fd = max(max_fd, sockfd);
-    }
-    if (conn->cgi != NULL) {
-      FD_SET(conn->cgi->outfd, &(pool->readfs));
-      max_fd = max(max_fd, conn->cgi->outfd);
-      FD_SET(conn->cgi->infd, &(pool->writefs));
-      max_fd = max(max_fd, conn->cgi->infd);
-    }
-    conn = conn->next;
-  }   
-  int rv = select(max_fd + 1, &(pool->readfs), &(pool->writefs), NULL, NULL);
+  pool_add_readfd(pool, pool->http_sock);
+  pool_add_readfd(pool, pool->https_sock);
+  int rv = select(pool->maxfd + 1, &(pool->readfs), &(pool->writefs), NULL, NULL);
   if (rv == -1) {
     perror("select");
   }  
@@ -185,13 +181,13 @@ void pool_wait_io(Pool* pool) {
   if (FD_ISSET(pool->http_sock, &(pool->readfs))) {
     struct sockaddr_in cli_addr;
     socklen_t cli_size = sizeof(cli_addr);
-    int sockfd = accept(pool->http_sock, (struct sockaddr *) &cli_addr, &cli_size);
+    int sockfd = accept(pool->http_sock, (struct sockaddr*) &cli_addr, &cli_size);
     if (sockfd == -1) {
       perror("accept");
     }
     if (!pool_is_full(pool)) {
       Conn* conn = (Conn*)malloc(sizeof(Conn));
-      conn_init(conn, sockfd, NULL);
+      conn_init(conn, sockfd, NULL, cli_addr.sin_addr);
       pool_add_conn(pool, conn);
     } else {
       close(sockfd);
@@ -202,7 +198,7 @@ void pool_wait_io(Pool* pool) {
   if (FD_ISSET(pool->https_sock, &(pool->readfs))) {
     struct sockaddr_in cli_addr;
     socklen_t cli_size = sizeof(cli_addr);
-    int sockfd = accept(pool->https_sock, (struct sockaddr *) &cli_addr, &cli_size);
+    int sockfd = accept(pool->https_sock, (struct sockaddr*) &cli_addr, &cli_size);
     if (sockfd == -1) {
       perror("accept");
     }
@@ -219,7 +215,7 @@ void pool_wait_io(Pool* pool) {
         }
         if (success) {
           Conn* conn = (Conn*)malloc(sizeof(Conn));
-          conn_init(conn, sockfd, ssl);
+          conn_init(conn, sockfd, ssl, cli_addr.sin_addr);
           pool_add_conn(pool, conn);  
         } else {
           SSL_free(ssl);

@@ -66,7 +66,7 @@ void request_destroy(Request* request);
 
 void request_add_header(Request* request, const char* name, const char* value);
 
-RequestHeader* request_get_header(Request* request, const char* name);
+char* request_get_header(Request* request, const char* name);
 
 void response_init(Response* response, StatusCode status_code);
 

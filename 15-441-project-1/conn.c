@@ -3,8 +3,9 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-void conn_init(Conn* conn, int sockfd, SSL* ssl) {
+void conn_init(Conn* conn, int sockfd, SSL* ssl, struct in_addr addr) {
   conn->sockfd = sockfd;
+  conn->addr = addr;
   conn->ssl = ssl;
   conn->cgi = NULL;
   conn->handle = NULL;

@@ -7,7 +7,7 @@
 
 static char tmpbuf[4096];
 
-RequestHeader* request_get_header(Request* request, const char* name) {
+char* request_get_header(Request* request, const char* name) {
 	RequestHeader* p = request->headers;
 	while (p != NULL) {
 		if (!strcmp(p->header_name, name)) {
@@ -15,7 +15,7 @@ RequestHeader* request_get_header(Request* request, const char* name) {
 		}
 		p = p->next;
 	}
-	return p;
+	return p == NULL ? NULL : p->header_value;
 }
 
 void request_init(Request* request) {

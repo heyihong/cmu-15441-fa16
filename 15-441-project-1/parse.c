@@ -55,9 +55,9 @@ Request * parser_parse(Parser* parser, Buffer* buf) {
 	set_parsing_options(parser->buf, parser->buf_len, request);
 	int success = yyparse();
 	if (success == SUCCESS) {
-		RequestHeader* header = request_get_header(request, "Content-length");	
-		if (header != NULL) {
-			request->content_length = atoi(header->header_value);
+		char* value = request_get_header(request, "Content-length");	
+		if (value != NULL) {
+			request->content_length = atoi(value);
 		}
 		// TODO check valid number
 		if (request->content_length < 0) {

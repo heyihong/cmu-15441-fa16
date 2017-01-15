@@ -27,7 +27,7 @@ struct Handle {
 
 typedef struct Handle Handle;
 
-void handle_init(Handle* handle, const char* www_foler, Request* request);
+void handle_init(Handle* handle, char* www_foler, Request* request);
 
 void handle_read(Handle* handle, Buffer* buf);
 

@@ -91,7 +91,7 @@ static Response* do_head(Handle* handle) {
     return response;
 }
 
-void handle_init(Handle* handle, const char* www_folder, Request* request) {
+void handle_init(Handle* handle, char* www_folder, Request* request) {
     handle->www_folder = www_folder;
     handle->request = request;
     handle->req_content_length = 0;
@@ -149,6 +149,7 @@ void handle_read(Handle* handle, Buffer* buf) {
             }
             break;
             default: {
+                log_(LOG_WARN, "handle_read is called when handle state isn't HANDLE_PROCESS or HANDLE_SEND\n");
                 return;
             }
         }
@@ -157,6 +158,7 @@ void handle_read(Handle* handle, Buffer* buf) {
 
 void handle_write(Handle* handle, Buffer* buf) { 
     if (handle->state != HANDLE_RECV) {
+        log_(LOG_WARN, "handle_read is called when handle state isn't HANDLE_RECV\n");
         return;
     }
     int len = min(buffer_output_size(buf), handle->request->content_length - handle->req_content_length);

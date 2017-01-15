@@ -8,13 +8,14 @@
 struct Pool {
 	int max_conns;
 	int num_conns;
+    int http_sock;
+    int https_sock;
 	Conn* conns; 
 	SSL_CTX* ssl_context;	
-
-	int http_sock;
-	int https_sock;
+    // maxfd, writefs and readfs are used for select 
+    int maxfd;
+    fd_set readfs;
     fd_set writefs;
-	fd_set readfs;
 };
 
 typedef struct Pool Pool;
@@ -30,6 +31,12 @@ int pool_is_full(Pool* pool);
 void pool_add_conn(Pool* pool, Conn* new_conn);
 
 void pool_remove_conn(Pool* pool, Conn* conn);
+
+void pool_clear_fs(Pool* pool);
+
+void pool_add_readfd(Pool* pool, int fd);
+
+void pool_add_writefd(Pool* pool, int fd);
 
 void pool_wait_io(Pool* pool);
 
