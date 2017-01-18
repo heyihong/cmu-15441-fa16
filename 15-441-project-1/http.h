@@ -5,8 +5,10 @@
 
 enum StatusCode {
 	OK = 200,
+	BAD_REQUEST = 400,
 	NOT_FOUND = 404,
 	LENGTH_REQUIRED = 411,
+	REQUEST_ENTITY_TOO_LARGE = 413,
 	INTERNAL_SERVER_ERROR = 500,
 	NOT_IMPLEMENTED = 501,
 	SERVICE_UNAVAILABLE = 503,
@@ -68,7 +70,11 @@ void request_add_header(Request* request, const char* name, const char* value);
 
 char* request_get_header(Request* request, const char* name);
 
+int request_connection_close(Request* request);
+
 void response_init(Response* response, StatusCode status_code);
+
+Response* response_error(StatusCode code);
 
 void response_destroy(Response* response);
 

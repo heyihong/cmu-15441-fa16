@@ -1,7 +1,9 @@
 #include <string.h>
 #include <stdlib.h>
+#include <fcntl.h>
 
 #include "utils.h"
+#include "log.h"
 
 int min(int x, int y) {
 	return x < y ? x : y;
@@ -53,4 +55,15 @@ const char* get_mimetype(const char* ext) {
         }
     }
     return "application/octet-stream";
+}
+
+void enable_non_blocking(int fd) {
+    int flags = fcntl(fd, F_GETFL, 0);
+    if (flags < 0) {
+        log_(LOG_ERROR, "return value of fcntl(%d, F_GETFL, 0) is negative\n", fd);
+        return;
+    }
+    if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) != 0) {
+        log_(LOG_ERROR, "return value of fcntl(%d, F_SETFL, %d) is non-zero\n", fd, flags | O_NONBLOCK);
+    }
 }

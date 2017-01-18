@@ -27,8 +27,9 @@ struct Conn {
     SSL* ssl;
     Handle* handle;
     Cgi* cgi;
-    Buffer buf;
     Parser parser;
+    Buffer in_buf;
+    Buffer out_buf;
     ConnState state; 
     struct Conn* prev;
     struct Conn* next;
@@ -38,9 +39,9 @@ typedef struct Conn Conn;
 
 void conn_init(Conn* conn, int sockfd, SSL* ssl, struct in_addr addr);
 
-void conn_send(Conn* conn);
+int conn_send(Conn* conn);
 
-void conn_recv(Conn* conn);
+int conn_recv(Conn* conn);
 
 void conn_destroy(Conn* conn);
 

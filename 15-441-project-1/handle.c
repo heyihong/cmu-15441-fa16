@@ -9,20 +9,13 @@
 
 static char tmpbuf[4096];
 
-static Response* error_response(StatusCode status_code) {
-    Response* response = (Response*)malloc(sizeof(Response));
-    response_init(response, status_code);
-    response_add_header(response, "Content-Type", "text/html");     
-    return response;
-}
-
 static int check_http_version(Request* request) {
     return strcmp(request->http_version, "HTTP/1.1") == 0;
 }
 
 static Response* do_get(Handle* handle) { 
     if (!check_http_version(handle->request)) {
-        return error_response(HTTP_VERSION_NOT_SUPPORTED);
+        return response_error(HTTP_VERSION_NOT_SUPPORTED);
     }
     char* path = tmpbuf;
     strcpy(path, handle->www_folder);
@@ -35,7 +28,7 @@ static Response* do_get(Handle* handle) {
     }
     FILE* file = fopen(path, "r");
     if (file == NULL || stat(path, &statbuf) != 0) {
-        return error_response(NOT_FOUND);
+        return response_error(NOT_FOUND);
     }
     int content_length = statbuf.st_size;
     handle->file = file;
@@ -53,10 +46,7 @@ static Response* do_get(Handle* handle) {
 
 static Response* do_post(Handle* handle) {
     if (!check_http_version(handle->request)) {
-        return error_response(HTTP_VERSION_NOT_SUPPORTED);
-    }
-    if (request_get_header(handle->request, "Content-Length") == NULL) {
-        return error_response(LENGTH_REQUIRED);
+        return response_error(HTTP_VERSION_NOT_SUPPORTED);
     }
     Response* response = (Response*)malloc(sizeof(Response));
     response_init(response, OK);
@@ -65,7 +55,7 @@ static Response* do_post(Handle* handle) {
 
 static Response* do_head(Handle* handle) {
     if (!check_http_version(handle->request)) {
-        return error_response(HTTP_VERSION_NOT_SUPPORTED);
+        return response_error(HTTP_VERSION_NOT_SUPPORTED);
     }
     char* path = tmpbuf;
     strcpy(path, handle->www_folder);
@@ -77,7 +67,7 @@ static Response* do_head(Handle* handle) {
         strcat(path, "/index.html");
     }
     if (stat(path, &statbuf) != 0) {
-        return error_response(NOT_FOUND);
+        return response_error(NOT_FOUND);
     }
     int content_length = statbuf.st_size;
     Response* response = (Response*)malloc(sizeof(Response));
@@ -97,7 +87,7 @@ void handle_init(Handle* handle, char* www_folder, Request* request) {
     handle->req_content_length = 0;
     handle->res_content_length = 0;
     handle->file = NULL;
-    handle->state = request->content_length == 0 ? HANDLE_PROCESS : HANDLE_RECV; 
+    handle->state = request->content_length <= 0 ? HANDLE_PROCESS : HANDLE_RECV; 
 }
 
 void handle_read(Handle* handle, Buffer* buf) {
@@ -105,21 +95,27 @@ void handle_read(Handle* handle, Buffer* buf) {
         switch (handle->state) {
             case HANDLE_PROCESS: {
                 Request* request = handle->request;
-                // handle request
-                log_(LOG_INFO, "handle request: %s %s %s\n", request->http_method, request->abs_path, request->http_version);
                 // always close connection according to project document
                 Response* response;
-                if (!strcmp(request->http_method, "GET")) {
+                if (handle->request->content_length < 0) {
+                    response = response_error(REQUEST_ENTITY_TOO_LARGE);
+                } else if (!strcmp(request->http_method, "GET")) {
                     response = do_get(handle);
                 } else if (!strcmp(request->http_method, "POST")) {
                     response = do_post(handle);
                 } else if (!strcmp(request->http_method, "HEAD")) {
                     response = do_head(handle);
                 } else {
-                    response = error_response(NOT_IMPLEMENTED);
+                    response = response_error(NOT_IMPLEMENTED);
+                }
+                // handle connection token
+                if (response->status_code != OK || request_connection_close(handle->request)) {
+                    request_add_header(handle->request, "Connection", "close");
                 }
                 // assume the buffer can hold the whole response
                 buffer_init_by_response(buf, response);
+                buf->data[buf->end] = 0;
+                log_(LOG_DEBUG, "%s", buf->data);
                 response_destroy(response);
                 free(response); 
                 if (handle->file != NULL) {

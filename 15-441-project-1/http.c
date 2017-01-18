@@ -10,7 +10,7 @@ static char tmpbuf[4096];
 char* request_get_header(Request* request, const char* name) {
 	RequestHeader* p = request->headers;
 	while (p != NULL) {
-		if (!strcmp(p->header_name, name)) {
+		if (!strcasecmp(p->header_name, name)) {
 			break;
 		}
 		p = p->next;
@@ -54,6 +54,11 @@ void request_add_header(Request* request, const char* name, const char* value) {
 	request->headers = header;
 }
 
+int request_connection_close(Request* request) {
+	char* connection = request_get_header(request, "Connection");
+	return connection != NULL && !strcasecmp(connection, "Close");
+}
+
 void response_init(Response* response, StatusCode status_code) {
 	response->headers = NULL;
 	response->http_version = new_str("HTTP/1.1");	
@@ -62,11 +67,17 @@ void response_init(Response* response, StatusCode status_code) {
 		case OK:
 			response->reason_phrase = new_str("OK");
 			break;
+		case BAD_REQUEST:
+			response->reason_phrase = new_str("Bad Request");
+			break;
 		case NOT_FOUND:
 			response->reason_phrase = new_str("Not Found");
 			break;
 		case LENGTH_REQUIRED:
 			response->reason_phrase = new_str("Length Required");
+			break;
+		case REQUEST_ENTITY_TOO_LARGE:
+			response->reason_phrase = new_str("Request Entity Too Large");
 			break;
 		case INTERNAL_SERVER_ERROR:
 			response->reason_phrase = new_str("Internal Server Error");
@@ -87,7 +98,13 @@ void response_init(Response* response, StatusCode status_code) {
 	// auto generate server and date header
 	response_add_header(response, "Server", "Liso/1.0");
 	response_add_header(response, "Date", str);
-	response_add_header(response, "Connection", "close");
+}
+
+Response* response_error(StatusCode status_code) {
+    Response* response = (Response*)malloc(sizeof(Response));
+    response_init(response, status_code);
+    response_add_header(response, "Content-Type", "text/html");     
+    return response;
 }
 
 void response_destroy(Response* response) {

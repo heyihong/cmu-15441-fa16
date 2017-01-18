@@ -1,5 +1,4 @@
 #include "parse.h"
-#include "utils.h"
 
 void parser_init(Parser* parser) {
 	parser->buf_len = 0;
@@ -55,13 +54,9 @@ Request * parser_parse(Parser* parser, Buffer* buf) {
 	set_parsing_options(parser->buf, parser->buf_len, request);
 	int success = yyparse();
 	if (success == SUCCESS) {
-		char* value = request_get_header(request, "Content-length");	
+		char* value = request_get_header(request, "Content-Length");	
 		if (value != NULL) {
 			request->content_length = atoi(value);
-		}
-		// TODO check valid number
-		if (request->content_length < 0) {
-			success = !SUCCESS;
 		}
 	}
 	if (success != SUCCESS) {
