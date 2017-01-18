@@ -117,7 +117,7 @@ void handle_read(Handle* handle, Buffer* buf) {
                 // assume the buffer can hold the whole response
                 buffer_init_by_response(buf, response);
                 buf->data[buf->end] = 0;
-                log_(LOG_DEBUG, "Response\n%s", buf->data);
+                log_(LOG_DEBUG, "Response(length = %d)\n%s", buf->end, buf->data);
                 response_destroy(response);
                 free(response); 
                 if (handle->file != NULL) {

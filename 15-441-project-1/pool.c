@@ -133,6 +133,7 @@ int pool_is_full(Pool *pool) {
 }
 
 void pool_add_conn(Pool *pool, Conn *new_conn) {
+    enable_non_blocking(new_conn->sockfd);
     log_(LOG_DEBUG, "add new connection, sockfd = %d\n", new_conn->sockfd);
     pool->num_conns++;
     new_conn->next = pool->conns;
@@ -160,70 +161,74 @@ void pool_remove_conn(Pool *pool, Conn *conn) {
 
 void pool_wait_io(Pool *pool) {
     log_(LOG_DEBUG, "The connection pool is waiting for io\n");
+    io_need_read(pool->http_sock);
+    io_need_read(pool->https_sock);
     io_wait();
-    // add a new http connection to the pool if it has
     int sockfd;
     struct sockaddr_in cli_addr;
     socklen_t cli_size;
-    cli_size = sizeof(cli_addr);
-    sockfd = accept(pool->http_sock, (struct sockaddr *) &cli_addr, &cli_size);
-    if (sockfd < 0) {
-        switch (errno) {
-            case EAGAIN:
-                io_need_read(pool->http_sock);
-                break;
-            default:
-                perror("accept");
-        }
-    } else if (!pool_is_full(pool)) {
-        enable_non_blocking(sockfd);
-        Conn *conn = (Conn *) malloc(sizeof(Conn));
-        conn_init(conn, sockfd, NULL, cli_addr.sin_addr);
-        pool_add_conn(pool, conn);
-    } else {
-        close(sockfd);
-        log_(LOG_INFO,
-             "Drop the new http connection due to the connection pool is full, number of connections = %d\n",
-             pool->num_conns);
-    }
-    // add a new https connection to the pool if it has
-    cli_size = sizeof(cli_addr);
-    sockfd = accept(pool->https_sock, (struct sockaddr *) &cli_addr, &cli_size);
-    if (sockfd < 0) {
-        switch (errno) {
-            case EAGAIN:
-                io_need_read(pool->https_sock);
-                break;
-            default:
-                perror("accept");
-        }
-    } else if (!pool_is_full(pool)) {
-        enable_non_blocking(sockfd);
-        SSL *ssl = SSL_new(pool->ssl_context);
-        if (ssl != NULL) {
-            int success = 1;
-            if (SSL_set_fd(ssl, sockfd) == 0) {
-                log_(LOG_ERROR, "Error creating client SSLcontext .\n");
-                success = 0;
-            } else {
-                SSL_set_accept_state(ssl);
+    while (1) {
+        // add a new http connection to the pool if it has
+        cli_size = sizeof(cli_addr);
+        sockfd = accept(pool->http_sock, (struct sockaddr *) &cli_addr, &cli_size);
+        if (sockfd < 0) {
+            switch (errno) {
+                case EAGAIN:
+                    break;
+                default:
+                    perror("accept");
             }
-            if (success) {
-                Conn *conn = (Conn *) malloc(sizeof(Conn));
-                conn_init(conn, sockfd, ssl, cli_addr.sin_addr);
-                pool_add_conn(pool, conn);
+            break;
+        } else if (!pool_is_full(pool)) {
+            Conn *conn = (Conn *) malloc(sizeof(Conn));
+            conn_init(conn, sockfd, NULL, cli_addr.sin_addr);
+            pool_add_conn(pool, conn);
+        } else {
+            close(sockfd);
+            log_(LOG_INFO,
+                 "Drop the new http connection due to the connection pool is full, number of connections = %d\n",
+                 pool->num_conns);
+        }
+    }
+    while (1) {
+        // add a new https connection to the pool if it has
+        cli_size = sizeof(cli_addr);
+        sockfd = accept(pool->https_sock, (struct sockaddr *) &cli_addr, &cli_size);
+        if (sockfd < 0) {
+            switch (errno) {
+                case EAGAIN:
+                    break;
+                default:
+                    perror("accept");
+            }
+            break;
+        } else if (!pool_is_full(pool)) {
+            SSL *ssl = SSL_new(pool->ssl_context);
+            if (ssl != NULL) {
+                int success = 1;
+                if (SSL_set_fd(ssl, sockfd) == 0) {
+                    log_(LOG_ERROR, "Error creating client SSLcontext .\n");
+                    success = 0;
+                } else {
+                    SSL_set_accept_state(ssl);
+                }
+                if (success) {
+                    Conn *conn = (Conn *) malloc(sizeof(Conn));
+                    conn_init(conn, sockfd, ssl, cli_addr.sin_addr);
+                    pool_add_conn(pool, conn);
+                } else {
+                    SSL_free(ssl);
+                    close(sockfd);
+                }
             } else {
-                SSL_free(ssl);
                 close(sockfd);
+                log_(LOG_ERROR, "Error creating client SSL context.\n");
             }
         } else {
             close(sockfd);
-            log_(LOG_ERROR, "Error creating client SSL context.\n");
+            log_(LOG_INFO,
+                 "Drop the new https connection due to the connection pool is full, number of connections = %d\n",
+                 pool->num_conns);
         }
-    } else {
-        close(sockfd);
-        log_(LOG_INFO,
-             "Drop the new https connection due to the connection pool is full, number of connections = %d\n",
-             pool->num_conns);
     }
 }
