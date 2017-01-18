@@ -102,6 +102,7 @@ void handle_conn(Conn *conn) {
     while (1) {
         switch (conn->state) {
             case RECV_REQ_HEAD: {
+                log_(LOG_DEBUG, "Connection state is RECV_REQ_HEAD\n");
                 Request *request = parser_parse(&(conn->parser), &(conn->in_buf));
                 if (request != NULL) {
                     log_(LOG_INFO, "handle request: %s %s %s\n", request->http_method, request->abs_path,
@@ -117,13 +118,14 @@ void handle_conn(Conn *conn) {
                         conn->state = RECV_REQ_BODY;
                     }
                 } else if (conn->parser.state == STATE_FAILED) {
-                    conn->state = CONN_FAILED;
+                    conn->state = CONN_CLOSE;
                 } else if (!conn_recv(conn)) {
                     return;
                 }
             }
                 break;
             case RECV_REQ_BODY: {
+                log_(LOG_DEBUG, "Connection state is RECV_REQ_BODY\n");
                 if (conn->handle->state != HANDLE_RECV) {
                     conn->state = SEND_RES;
                 } else if (!buffer_is_empty(&(conn->in_buf))) {
@@ -134,13 +136,14 @@ void handle_conn(Conn *conn) {
             }
                 break;
             case SEND_RES: {
+                log_(LOG_DEBUG, "Connection state is SEND_RES\n");
                 if (conn->handle->state == HANDLE_FAILED) {
-                    conn->state = CONN_FAILED;
+                    conn->state = CONN_CLOSE;
                 } else if (!buffer_is_full(&(conn->out_buf))
                            && (conn->handle->state == HANDLE_PROCESS || conn->handle->state == HANDLE_SEND)) {
                     handle_read(conn->handle, &(conn->out_buf));
                 } else if (buffer_is_empty(&(conn->out_buf)) && conn->handle->state == HANDLE_FINISHED) {
-                    if (request_connection_close(conn->handle->request)) {
+                    if (conn->handle->last_req) {
                         conn->state = CONN_CLOSE;
                     } else {
                         handle_destroy(conn->handle);
@@ -155,6 +158,7 @@ void handle_conn(Conn *conn) {
             }
                 break;
             case CGI_RECV_REQ_BODY: {
+                log_(LOG_DEBUG, "Connection state is CGI_RECV_REQ_BODY\n");
                 if (conn->cgi->state != CGI_RECV) {
                     conn->state = CGI_SEND_RES;
                 } else if (!conn_recv(conn)
@@ -164,8 +168,9 @@ void handle_conn(Conn *conn) {
             }
                 break;
             case CGI_SEND_RES: {
+                log_(LOG_DEBUG, "Connection state is CGI_SEND_RES\n");
                 if (conn->cgi->state == CGI_FAILED) {
-                    conn->state = CONN_FAILED;
+                    conn->state = CONN_CLOSE;
                 } else if (buffer_is_empty(&(conn->out_buf)) && conn->cgi->state == CGI_FINISHED) {
                     if (request_connection_close(conn->cgi->request)) {
                         conn->state = CONN_CLOSE;
@@ -183,10 +188,7 @@ void handle_conn(Conn *conn) {
             }
                 break;
             case CONN_CLOSE: {
-                pool_remove_conn(&pool, conn);
-                return;
-            }
-            case CONN_FAILED: {
+                log_(LOG_DEBUG, "Connection state is CONN_CLOSE\n");
                 pool_remove_conn(&pool, conn);
                 return;
             }
@@ -200,9 +202,9 @@ int main(int argc, char *argv[]) {
                 "usage: ./lisod <HTTP port> <HTTPS port> <log file> <lock file> <www folder> <CGI script path> <private key file> <certificate file>\n");
         exit(EXIT_FAILURE);
     }
-    if (daemonize(options.lock_file) == EXIT_FAILURE) {
-        exit(EXIT_FAILURE);
-    }
+//    if (daemonize(options.lock_file) == EXIT_FAILURE) {
+//        exit(EXIT_FAILURE);
+//    }
     fprintf(stdout, "----- Lisod Server -----\n");
     io_init();
     log_init(LOG_DEBUG, options.log_file);

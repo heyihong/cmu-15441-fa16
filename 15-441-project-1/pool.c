@@ -17,6 +17,11 @@ static void pool_http_start(Pool *pool, int http_port) {
         log_(LOG_ERROR, "Failed creating socket.\n");
         exit(EXIT_FAILURE);
     }
+    int yes = 1;
+    if (setsockopt(pool->http_sock,SOL_SOCKET,SO_REUSEADDR,&yes,sizeof yes) == -1) {
+        perror("setsockopt");
+        exit(EXIT_FAILURE);
+    }
     enable_non_blocking(pool->http_sock);
 
     addr.sin_family = AF_INET;
@@ -73,6 +78,11 @@ static void pool_https_start(Pool *pool,
     if ((pool->https_sock = socket(PF_INET, SOCK_STREAM, 0)) == -1) {
         SSL_CTX_free(pool->ssl_context);
         log_(LOG_ERROR, "Failed creating socket.\n");
+        exit(EXIT_FAILURE);
+    }
+    int yes = 1;
+    if (setsockopt(pool->https_sock,SOL_SOCKET,SO_REUSEADDR,&yes,sizeof yes) == -1) {
+        perror("setsockopt");
         exit(EXIT_FAILURE);
     }
     enable_non_blocking(pool->https_sock);
@@ -166,6 +176,7 @@ void pool_wait_io(Pool *pool) {
                 perror("accept");
         }
     } else if (!pool_is_full(pool)) {
+        enable_non_blocking(sockfd);
         Conn *conn = (Conn *) malloc(sizeof(Conn));
         conn_init(conn, sockfd, NULL, cli_addr.sin_addr);
         pool_add_conn(pool, conn);
@@ -187,6 +198,7 @@ void pool_wait_io(Pool *pool) {
                 perror("accept");
         }
     } else if (!pool_is_full(pool)) {
+        enable_non_blocking(sockfd);
         SSL *ssl = SSL_new(pool->ssl_context);
         if (ssl != NULL) {
             int success = 1;

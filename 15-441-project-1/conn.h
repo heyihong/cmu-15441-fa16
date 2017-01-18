@@ -15,7 +15,6 @@ enum ConnState {
     SEND_RES,
     CGI_RECV_REQ_BODY,
     CGI_SEND_RES,
-    CONN_FAILED,
     CONN_CLOSE
 };
 

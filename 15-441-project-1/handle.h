@@ -21,6 +21,7 @@ struct Handle {
     Request* request;
     int req_content_length;
     int res_content_length;
+    int last_req;
     FILE* file;
     HandleState state;
 };

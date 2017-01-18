@@ -86,6 +86,7 @@ void handle_init(Handle* handle, char* www_folder, Request* request) {
     handle->request = request;
     handle->req_content_length = 0;
     handle->res_content_length = 0;
+    handle->last_req = 0;
     handle->file = NULL;
     handle->state = request->content_length <= 0 ? HANDLE_PROCESS : HANDLE_RECV; 
 }
@@ -110,12 +111,13 @@ void handle_read(Handle* handle, Buffer* buf) {
                 }
                 // handle connection token
                 if (response->status_code != OK || request_connection_close(handle->request)) {
-                    request_add_header(handle->request, "Connection", "close");
+                    response_add_header(response, "Connection", "close");
+                    handle->last_req = 1;
                 }
                 // assume the buffer can hold the whole response
                 buffer_init_by_response(buf, response);
                 buf->data[buf->end] = 0;
-                log_(LOG_DEBUG, "%s", buf->data);
+                log_(LOG_DEBUG, "Response\n%s", buf->data);
                 response_destroy(response);
                 free(response); 
                 if (handle->file != NULL) {
@@ -143,7 +145,6 @@ void handle_read(Handle* handle, Buffer* buf) {
                 }
                 return;
             }
-            break;
             default: {
                 log_(LOG_WARN, "handle_read is called when handle state isn't HANDLE_PROCESS or HANDLE_SEND\n");
                 return;

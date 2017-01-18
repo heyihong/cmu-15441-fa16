@@ -1,5 +1,6 @@
 #include "conn.h"
 #include "io.h"
+#include "log.h"
 
 #include <unistd.h>
 #include <errno.h>
@@ -19,7 +20,7 @@ void conn_init(Conn *conn, int sockfd, SSL *ssl, struct in_addr addr) {
 
 int conn_send(Conn *conn) {
     Buffer *buf = &(conn->out_buf);
-    if (conn->state == CONN_FAILED || buffer_is_empty(buf)) {
+    if (conn->state == CONN_CLOSE || buffer_is_empty(buf)) {
         return 1;
     }
     if (io_wait_read(conn->sockfd) || io_wait_write(conn->sockfd)) {
@@ -37,7 +38,7 @@ int conn_send(Conn *conn) {
                     io_need_write(conn->sockfd);
                     return 0;
                 default:
-                    conn->state = CONN_FAILED;
+                    conn->state = CONN_CLOSE;
                     return 1;
             }
         }
@@ -49,18 +50,19 @@ int conn_send(Conn *conn) {
                     io_need_write(conn->sockfd);
                     return 0;
                 default:
-                    conn->state = CONN_FAILED;
+                    conn->state = CONN_CLOSE;
                     return 1;
             }
         }
     }
     buffer_output(buf, ret);
+    log_(LOG_DEBUG, "Connection send %d byte(s)\n", ret);
     return 1;
 }
 
 int conn_recv(Conn *conn) {
     Buffer *buf = &(conn->in_buf);
-    if (conn->state == CONN_FAILED || buffer_is_full(buf)) {
+    if (conn->state == CONN_CLOSE || buffer_is_full(buf)) {
         return 1;
     }
     if (io_wait_read(conn->sockfd) || io_wait_write(conn->sockfd)) {
@@ -78,7 +80,7 @@ int conn_recv(Conn *conn) {
                     io_need_write(conn->sockfd);
                     return 0;
                 default:
-                    conn->state = CONN_FAILED;
+                    conn->state = CONN_CLOSE;
                     return 1;
             }
         }
@@ -90,7 +92,7 @@ int conn_recv(Conn *conn) {
                     io_need_read(conn->sockfd);
                     return 0;
                 default:
-                    conn->state = CONN_FAILED;
+                    conn->state = CONN_CLOSE;
                     return 1;
             }
         } else if (ret == 0) {
@@ -99,6 +101,7 @@ int conn_recv(Conn *conn) {
         }
     }
     buffer_input(buf, ret);
+    log_(LOG_DEBUG, "Connection receive %d byte(s)\n", ret);
     return 1;
 }
 
